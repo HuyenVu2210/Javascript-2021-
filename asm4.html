@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>My News</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+
+	<style>
+
+		html, body {
+        	height: 100%;
+        	margin: 0px;
+        	min-width: 370px;
+    	}
+
+    	#loadingDiv{
+    		position: absolute;
+    		top: 40vh;
+    		left: 40vw;
+    	}
+
+    	/* header */
+
+    	.header{
+    		padding-top: 1vh;
+    		padding-bottom: 1vh;
+    		display: flex;
+    		justify-content: center;
+    		background-color: #d1d1d1;
+    	}
+
+    	h1{
+    		font-size: 50px;
+    		font-weight: bold;
+    		color: #4a4a4a;
+    		font-family: 'Open Sans';
+    		padding-right: 25px;
+    	}
+
+    	.bi-search::before {
+    	    content: "\f502";
+    	    padding-bottom: 3vh;
+    	}
+
+		/* articles */
+
+		.article{
+			border: 1px solid #c2c2c2;
+			margin-top: 1vh;
+			height: auto;
+			border-radius: 5px;
+			font-size: 200%;
+		}
+
+		.article:first-child{
+			margin-top: 5vh;
+		}
+
+		img{
+			width: 100%;
+			padding: 5px;
+		}
+
+		.article a{
+			padding-top: 2vh;
+		}
+
+		.publish{
+			font-style: italic;
+			padding-top: 1vh;
+		}
+
+		.description{
+			padding-top: 1vh;
+		}
+
+		/* pop up */
+
+		#bg-popup{
+			height: 100vh;
+			width: 100vw;
+			background-color: rgba(0, 0, 0, 0.7);
+			position: absolute;
+			z-index: 1;
+			display: none;
+		}
+
+		#pop-up{
+			min-width: 370px;
+			width: 70vw;
+			height: auto;
+			background-color: #ffffff;
+			position: absolute;
+			z-index: 2;
+			top: 15vh;
+			left: 15vw;
+			display: none;
+		}
+
+		#close-popup{
+			font-size: 200%;
+			font-weight: bold;
+			float: right;
+			padding-right: 1vw;
+			text-decoration: none;
+			color: #000000;
+		}
+
+		form{
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			font-size: 200%;
+		}
+
+		label{
+			margin-left: 7vw;
+			margin-top: 3vh;
+		}
+
+		.ss{
+			height: auto;
+		}
+
+		.input:first-child{
+			margin-top: 2vh;
+		}
+
+		.input{
+			padding-left: 2vw;
+			padding-right: 2vw;
+		}
+
+		#spinner{
+			width: 4vw;
+			padding-right: 1vw;
+			display: none;
+		}
+
+		#submit{
+			margin-top: 2vh;
+			margin-bottom: 2vh;
+		}
+
+		@media screen and (min-width: 992px) {
+
+			.header{
+				padding-top: 6vh;
+				padding-bottom: 3vh;
+			}
+
+			h1{
+				font-size: 40px;
+			}
+
+			.article{
+				margin-top: 3vh;
+				font-size: 100%;
+			}
+
+			#pop-up{
+				width: auto;
+				top: 30vh;
+				left: 30vw;
+			}
+
+			#submit{
+				margin-top: 3vh;
+				margin-bottom: 3vh;
+			}
+
+			.input:first-child{
+				margin-top: 2vh;
+			}
+
+			.input{
+				padding-left: 3vw;
+				padding-right: 3vw;
+			}
+
+			form{
+				font-size: 12px;
+			}
+
+			label{
+				margin-left: 2vw;
+				margin-top: 3vh;
+			}
+
+			#close-popup{
+				font-size: 100%;
+			}
+		}
+
+	</style>
+
+</head>
+<body>
+
+	<!-- pop up -->
+	<div id="bg-popup"></div>
+	<div id="pop-up">
+		<a href="#" id="close-popup">x</a>
+		<form action="#">
+			<div>
+				<div class="input">
+					<label for="keywords">
+						Từ khóa: 
+						<input type="text" name="keywords" id="keywords" placeholder="Nhập từ khóa">
+					</label>
+				</div>
+
+				<div class="input">
+					<label for="country">Quốc gia: </label>
+					<select name="country" id="country">
+						<option value="all">Tất cả</option>
+					  	<option value="au">Australia</option>
+					  	<option value="br">Brazil</option>
+					  	<option value="ca">Canada</option>
+					  	<option value="ch">Switzerland</option>
+					  	<option value="cn">China</option>
+					  	<option value="de">Germany</option>
+					  	<option value="eg">Egypt</option>
+					  	<option value="es">Spain</option>
+					  	<option value="fr">France</option>
+					  	<option value="gb">United Kingdom</option>
+					  	<option value="gr">Greece</option>
+					  	<option value="hk">Hong Kong</option>
+					  	<option value="ie">Ireland</option>
+					  	<option value="il">Israel</option>
+					  	<option value="in">India</option>
+					  	<option value="it">Italy</option>
+					  	<option value="jp">Japan</option>
+					  	<option value="nl">Netherlands</option>
+					  	<option value="no">Norway</option>
+					  	<option value="pe">Peru</option>
+					  	<option value="ph">Philippines</option>
+					  	<option value="pk">Pakistan</option>
+					  	<option value="pt">Portugal</option>
+					  	<option value="ro">Romania</option>
+					  	<option value="ru">Russian Federation</option>
+					  	<option value="se">Sweden</option>
+					  	<option value="sg">Singapore</option>
+					  	<option value="tw">Taiwan, Province of China</option>
+					 	<option value="ua">Ukraine</option>
+					  	<option value="us">United States</option>
+					</select>
+				</div>
+
+				<div class="input">
+					<label for="from">
+						Từ ngày:
+						<input type="date" id="from" name="from">
+					</label>
+				</div>
+
+				<div class="input">
+					<label for="to">
+						Tới ngày:
+						<input type="date" id="to" name="to">
+					</label>
+				</div>
+			</div>
+
+			<div class="input">
+				<img src="favicon.ico" alt="" id="spinner">
+				<input type="submit" value="Tìm kiếm" id="submit">
+			</div>
+		</form>
+	</div>
+
+	<!-- header -->
+	<div class="container-fluid header">
+		<h1>My News</h1>
+		<a href="#" id="search">
+			<i class="bi bi-search" style="font-size: 50px;"></i>
+  		</a>
+	</div>
+
+	<!-- articles -->
+	<div id="articles" class="container"></div>
+	<div id="articles1" class="container"></div>
+
+
+	<footer class="bg-light text-center text-lg-start pt-3">
+	  	<!-- Copyright -->
+	  	<div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+	    	© 2021 Copyright:
+	    	<a class="text-dark" href="#">MyNews.com</a>
+	  	</div>
+	  	<!-- Copyright -->
+	</footer>
+
+
+
+
+	<script type="text/javascript">
+
+		$("document").ready(function(){
+
+			$("#search").click(function(e){
+				if (e) e.preventDefault();
+				$("#bg-popup").css("display" , "block");
+				$("#pop-up").css("display" , "block");
+				var scrollPosition = [
+				  self.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft,
+				  self.pageYOffset || document.documentElement.scrollTop  || document.body.scrollTop
+				];
+				var html = jQuery('html'); 
+				html.data('scroll-position', scrollPosition);
+				html.data('previous-overflow', html.css('overflow'));
+				html.css('overflow', 'hidden');
+				window.scrollTo(scrollPosition[0], scrollPosition[1]);
+			});
+
+
+			// close popup function
+
+			function closePopup(e){
+				if (e) e.preventDefault();
+				$("#bg-popup").css("display" , "none");
+				$("#pop-up").css("display" , "none");
+
+				$("#keywords").val("");
+				$("#country").val("");
+				$("#from").val("");
+				$("#to").val("");
+
+				var html = jQuery('html');
+				var scrollPosition = html.data('scroll-position');
+				html.css('overflow', html.data('previous-overflow'));
+				window.scrollTo(scrollPosition[0], scrollPosition[1])
+			}
+
+			$("#close-popup").click(function(e){
+				closePopup(e)
+			});
+
+			$("#bg-popup").click(function(e){
+				closePopup(e)
+			});
+
+
+			// get the top headline articles
+			fetch('https://gnews.io/api/v4/top-headlines?&token=bfe467c1cdf583a21bdb75a9dbd8cee8')
+			    .then(function (response) {
+			        return response.json();
+			    })
+			    .then(function (data) {
+			        let articles = data["articles"];
+
+			        $.each(articles, function( i, article ) {
+
+			        	let title = article["title"];
+			        	let publishedAt = article["publishedAt"];
+			        	let description = article["description"];
+			        	let image = article["image"];
+			        	let url = article["url"];
+
+			        	$("#articles").append(
+			        		"<div class='row article'><div class='col-lg-4 art-img' ><img src='" + image + 
+			        		"'></div><div class='col-lg-8 art-content'><a href='" + url + "' target='_blank'>" + title + "</a><p class='publish'>"
+			        		+ publishedAt + "</p><p class='description'>" 
+			        		+ description + "</p></div></div>");
+
+			        });
+			    });
+
+			// search
+
+			$("#submit").click(function(e){
+				if (e) e.preventDefault();
+
+				let keywords = $("#keywords").val();
+				let country = $("#country").val();
+				let from = $("#from").val();
+				let to = $("#to").val();
+
+				if (keywords == "") {
+					window.alert("Hãy nhập từ khóa để tìm kiếm");
+					return;				}
+
+				if (country == "all") {
+					country = "Any";
+				}
+
+
+				// show loading icon
+
+				$("#spinner").css("display" , "inline-block");
+
+				$("#submit").attr("disabled" , true);
+
+				fetch('https://gnews.io/api/v4/search?q=' 
+					+ keywords + '&country=' 
+					+ country + '&from=' 
+					+ from + '&to=' 
+					+ to + '&token=bfe467c1cdf583a21bdb75a9dbd8cee8')
+			    	.then(function (response) {
+			    	    return response.json();
+			    	})
+			    	.then(function (data) {
+
+			    		let articles = data["articles"];
+
+			    		if (articles.length === 0) {
+			    			window.alert("Không tìm thấy bài viết nào");
+			    		}
+
+			    		if ($("#articles").html() != "") {
+			    			$("#articles").remove();
+			    		}
+
+			    		if ($("#articles1").html() != "") {
+			    			$("#articles1").html("");
+			    		}
+
+			    	    $.each(articles, function( i, article ) {
+
+			    	    	let title = article["title"];
+			    	    	let publishedAt = article["publishedAt"];
+			    	    	let description = article["description"];
+			    	    	let image = article["image"];
+			    	    	let url = article["url"];
+
+			    	    	$("#articles1").append(
+			    	    		"<div class='row article'><div class='col-lg-4 art-img' ><img src='" + image + 
+			    	    		"'></div><div class='col-lg-8 art-content'><a href='" + url + "' target='_blank'>" + title + "</a><p class='publish'>"
+			    	    		+ publishedAt + "</p><p>" 
+			    	    		+ description + "</p></div></div>");
+
+			    	    	$("#spinner").css("display" , "none");
+			    	    	$("#submit").attr("disabled" , false);
+
+			    	    	closePopup(e);
+			    	});
+			    }); 
+			
+			})
+  
+		})
+
+
+	</script>
+	
+</body>
+</html>
+
+
