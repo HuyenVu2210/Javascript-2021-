@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<link rel="stylesheet" href="">
+
+	<style>
+
+		body{
+			background: linear-gradient(90deg, #deffff, #ffe3e3);
+			margin: 0;
+		}
+
+		h1{
+			font-size: 300%;
+		}
+
+		#div1{
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-top: 3vh;
+			background-color: rgb(255, 255, 255, 0.5);
+		}
+
+		label{
+			display: inline-block;
+			font-weight: bold;
+			font-size: 200%;
+			width: 20vw;
+			height: 3vh;
+		}
+
+		.form-item{
+			margin-top: 2vh;
+		}
+
+		#input{
+			display: inline-block;
+			margin-top: 3vh;
+			margin-bottom: 3vh;
+			width: 30vw;
+			height: 6vh;
+			font-size: 200%;
+		}
+
+		.score-input{
+			width: 30vw;
+			height: 3vh;
+		}
+
+		#div2{
+			margin-top: 10vh;
+			flex-direction: column;
+			align-items: center;
+			display: none;
+		}
+
+		#table{
+			width: 90vw;
+			border-collapse: collapse;
+			font-size: 200%;
+		}
+
+		tr, td, th{
+			border: 1px solid black;
+			text-align: center;
+		}
+
+		th{
+			background-color: rgb(255, 255, 255, 0.5);
+		}
+
+		.del-btn{
+			display: inline-block;
+			width: 15vw;
+			height: 2vh;
+		}
+
+		#button-2{
+			margin-top: 3vh;
+		}
+
+		#cal, #fil{
+			display: inline-block;
+			margin-top: 2vh;
+			margin-bottom: 2vh;
+			width: 40vw;
+			height: 3vh;
+			font-size: 200%;
+		}
+
+		.error{
+			padding-left: 3vw;
+			display: block;
+			width: auto;
+			font-size: 20px;
+			color: #ff0000;
+			opacity: 0.7;
+		}
+
+		@media only screen and (min-width: 992px) {
+			#table{
+				width: 70vw;
+			}
+
+			h1{
+				font-size: 200%;
+			}
+
+			label{
+				display: inline-block;
+				font-weight: bold;
+				font-size: 120%;
+				width: 10vw;
+				height: 3vh;
+			}
+
+			.form-item{
+				margin-top: 2vh;
+			}
+
+			#input{
+				display: inline-block;
+				margin-top: 3vh;
+				margin-bottom: 3vh;
+				width: 20vw;
+				height: 4vh;
+				font-size: 120%;
+			}
+
+			.score-input{
+				width: 20vw;
+				height: 3vh;
+			}
+
+			#table{
+				width: 70vw;
+				font-size: 120%;
+			}
+
+			.del-btn{
+				width: 100px;
+				height: 4vh;
+			}
+
+			#cal, #fil{
+				width: 20vw;
+				height: 4vh;
+				font-size: 120%;
+			}
+
+			.error{
+			padding-left: 2vw;
+			display: inline-block;
+			width: auto;
+		}
+
+	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+</head>
+<body>
+	<div id="div1">
+		<h1>Class Marksheet</h1>
+		<form action="#" id="form">
+			<div class="form-item">
+				<label for="name">Họ tên</label>
+				<input type="text" id="name" name="name" class="score-input" required> 
+			</div>
+
+			<div class="form-item">
+				<label for="math">Điểm toán</label>
+				<input type="text" id="math" name="math" class="score-input" required> 
+			</div>
+
+			<div class="form-item">
+				<label for="physical">Điểm lý</label>
+				<input type="text" id="physical" name="physical" class="score-input" required> 
+			</div>
+
+			<div class="form-item">
+				<label for="chemistry">Điểm hóa</label>
+				<input type="text" id="chemistry" name="chemistry" class="score-input" required> 
+			</div>
+			<div style="display: flex; justify-content: center;">
+				<input type="submit" value="Nhập" id="input"> 
+			</div>
+		</form>
+	</div>
+
+	<div id="div2">
+		<table id="table">
+			<tr>
+				<th>Số thứ tự</th>
+				<th>Họ tên</th>
+				<th>Điểm toán </th>
+				<th>Điểm lý </th>
+				<th>Điểm hóa </th>
+				<th>Trung bình</th>
+				<th>Xóa</th>
+			</tr>
+		</table>
+
+		<div id="button-2">
+			<input type="button" value="Tính điểm trung bình" id="cal"> 
+			<input type="button" value="Xác định học sinh giỏi" id="fil">
+		</div>
+	</div>
+
+
+	<script type="text/javascript">
+
+		// delete record
+
+		function deletescore(obj, e) {
+			if(e) e.preventDefault();
+			var y = parseFloat(obj.getAttribute("data-col"));
+			y1 = $("#" + y);
+			y1.remove();
+
+			i = $("#table tr").length;
+		};
+
+		$("document").ready(function(){
+
+			$("#form").validate({
+			  rules: {
+			    name: {
+			    	required: true
+			    },
+
+			    math: {
+			    	required: true,
+			    	number: true,
+			      	min: 0,
+			      	max: 10
+			    },
+
+			    physical: {
+			    	required: true,
+			    	number: true,
+			      	min: 0,
+			      	max: 10
+			    },
+
+			    chemistry: {
+			    	required: true,
+			    	number: true,
+			      	min: 0,
+			      	max: 10
+			    }
+			  },
+
+			  messages: {
+			    name: {
+			    	required: "Hãy nhập tên học sinh"
+			    },
+
+			    math: {
+			    	required: "Hãy nhập điểm toán",
+			      	number: "Hãy nhập chính xác điểm toán",
+			      	min: "Hãy nhập chính xác điểm toán",
+					max: "Hãy nhập chính xác điểm toán"
+			    },
+
+			    physical: {
+			    	required: "Hãy nhập điểm lý",
+			      	number: "Hãy nhập chính xác điểm lý",
+			      	min: "Hãy nhập chính xác điểm lý",
+					max: "Hãy nhập chính xác điểm lý"
+			    },
+
+			    chemistry: {
+			    	required: "Hãy nhập điểm hóa",
+			    	number: "Hãy nhập chính xác điểm hóa",
+			    	min: "Hãy nhập chính xác điểm hóa",
+					max: "Hãy nhập chính xác điểm hóa"
+			    }
+			  },
+
+			  	// When click on submit button
+			  	submitHandler: function(e){
+			  		getData();
+			  		insert();
+			  	}
+			})
+
+
+			var testScore = { 
+		        name: "",
+		        math: 0,
+		        physical: 0,
+		        chemistry: 0
+			};
+
+			// get input data
+			function getData(e){
+				if(e) e.preventDefault();
+
+	 				testScore["name"] = $("#name").val();
+	 				testScore["math"] = parseFloat($("#math").val());
+	 				testScore["physical"] = parseFloat($("#physical").val());
+	 				testScore["chemistry"] = parseFloat($("#chemistry").val());
+
+	 				$("#name").val("");
+	 				$("#math").val("");
+	 				$("#physical").val("");
+	 				$("#chemistry").val(""); 
+
+	 				$("#div2").css("display" , "flex").show(); 
+			}
+
+			// insert data
+
+			var i = 1;
+			var j = "?"
+
+			function insert(e){
+				if(e) e.preventDefault();
+
+				$('#table').append("<tr id=\"" + i + "\"><td>" + i + "</td><td>" 
+						+ testScore["name"] + "</td><td>" 
+						+ testScore["math"] + "</td><td>"
+						+ testScore["physical"] + "</td><td>"
+						+ testScore["chemistry"] + "</td><td>"
+						+ j + "</td><td><input type=\"button\" value=\"Xóa\" class=\"del-btn\" data-col=\"" + i + "\" onclick = \" deletescore(this)\">");
+
+				i++;
+			}
+
+			// calculate avarage score
+
+			function calculate(e) {
+				if(e) e.preventDefault();
+
+				$("#table tr").not(':first').each(function(i, row){
+					var row = $(row);
+            		var math = parseFloat(row.find("td:nth-child(3)").text());
+            		var physical = parseFloat(row.find("td:nth-child(4)").text());
+            		var chemistry = parseFloat(row.find("td:nth-child(5)").text());
+
+            		avarage = (math + physical + chemistry)/3;
+            		avarage = avarage.toFixed(1);
+            		
+            		row.find("td:nth-child(6)").text(avarage);
+            	
+           
+				})
+			}
+
+			// filter high score
+
+			function filter(e) {
+				if(e) e.preventDefault();
+				$("#table tr").not(':first').each(function(i, row){
+					var row = $(row);
+					var x = parseFloat(row.find("td:nth-child(6)").text());
+
+					if ( isNaN(x) ) {
+						window.alert("Hãy tính điểm trung bình của tất cả học sinh");
+						return false;
+					} 
+
+            		if ( x >= 8 ) {
+            			$(this).css({"background-color" : "red", "color" : "white"})
+            		}
+            		
+				})
+			}
+
+			$("#cal").click(function(e){
+				calculate(e)
+			});
+
+			$("#fil").click(function(e){
+				filter(e)
+			});
+
+		});
+
+	</script>
+</body>
+</html>
